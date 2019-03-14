@@ -5,6 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'tachyons';
 
+// When we say we mount a component we're replacing this (div co id root) and adding our entire app. that's mounting
 ReactDOM.render(
     <App />,
     document.getElementById('root')

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import CardList from './CardList.js';
 import SearchBox from './SearchBox';
-import { robots } from './robots';
+// import { robots } from './robots';
 import './App.css';
 
 // const state = {
@@ -13,9 +13,15 @@ class App extends Component {
     constructor() {
         super()
         this.state = { // state là cái sẽ thay đổi để describe hệ thống của mình. Thường để ở parent component để truyền props xuống cho các children components.
-            robots: robots,
+            robots: [], //robots,
             searchfield: ''
         }
+    }
+
+    componentDidMount() {
+        fetch('http://jsonplaceholder.typicode.com/users')
+            .then(response => response.json())
+            .then(users => this.setState({ robots: users }));
     }
 
     onSearchChange = (event) => {
@@ -24,6 +30,10 @@ class App extends Component {
     }
 
     render() {
+        if (this.state.robots.length === 0) {
+            return <h1 className="tc ma5">Loading</h1>
+        }
+
         const filteredRobots = this.state.robots.filter(robot => robot.name.toLowerCase().includes(this.state.searchfield.toLowerCase()))
 
         return (
