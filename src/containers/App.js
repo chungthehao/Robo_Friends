@@ -7,7 +7,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 // import { robots } from './robots';
 import './App.css';
 
-import { setSearchField } from '../actions';
+import { setSearchField, requestRobots } from '../actions';
 
 // const state = {
 //     robots: robots,
@@ -15,27 +15,34 @@ import { setSearchField } from '../actions';
 // }
 
 const mapStateToProps = state => ({
-    searchField: state/*.searchRobots*/.searchField
+    searchField: state.searchRobots.searchField, // state/*.searchRobots*/.searchField
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
 })
 
 const mapDispatchToProps = dispatch => ({
-    onSearchChange: event => dispatch(setSearchField(event.target.value))
+    onSearchChange: event => dispatch(setSearchField(event.target.value)),
+    onRequestRobots: () => dispatch(requestRobots())
 })
 
 class App extends Component {
-    constructor() {
+    /*constructor() {
         super()
         this.state = { // state là cái sẽ thay đổi để describe hệ thống của mình. Thường để ở parent component để truyền props xuống cho các children components.
             robots: [], //robots,
             // searchfield: ''
         }
-    }
+    }*/
 
     componentDidMount() {
         // console.log(this.props.store.getState())
-        fetch('http://jsonplaceholder.typicode.com/users')
-            .then(response => response.json())
-            .then(users => this.setState({ robots: users }));
+
+        // fetch('http://jsonplaceholder.typicode.com/users')
+        //     .then(response => response.json())
+        //     .then(users => this.setState({ robots: users }));
+
+        this.props.onRequestRobots()
     }
 
     // onSearchChange = (event) => {
@@ -44,9 +51,9 @@ class App extends Component {
     // }
 
     render() {
-        const { robots/*, searchfield*/ } = this.state
-        const { searchField, onSearchChange } = this.props
-        if ( ! robots.length) {
+        // const { robots/*, searchfield*/ } = this.state
+        const { searchField, onSearchChange, robots, isPending } = this.props
+        if ( /*! robots.length*/ isPending) {
             return <h1 className="tc ma5">Loading</h1>
         }
 
