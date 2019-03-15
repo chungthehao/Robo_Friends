@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CardList from '../components/CardList.js';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
@@ -6,17 +7,27 @@ import ErrorBoundary from '../components/ErrorBoundary';
 // import { robots } from './robots';
 import './App.css';
 
+import { setSearchField } from '../actions';
+
 // const state = {
 //     robots: robots,
 //     searchfield: ''
 // }
+
+const mapStateToProps = state => ({
+    searchField: state/*.searchRobots*/.searchField
+})
+
+const mapDispatchToProps = dispatch => ({
+    onSearchChange: event => dispatch(setSearchField(event.target.value))
+})
 
 class App extends Component {
     constructor() {
         super()
         this.state = { // state là cái sẽ thay đổi để describe hệ thống của mình. Thường để ở parent component để truyền props xuống cho các children components.
             robots: [], //robots,
-            searchfield: ''
+            // searchfield: ''
         }
     }
 
@@ -27,23 +38,24 @@ class App extends Component {
             .then(users => this.setState({ robots: users }));
     }
 
-    onSearchChange = (event) => {
-        // this.state.searchfield = event.target.value // Ko nen set state truc tiep
-        this.setState({ searchfield: event.target.value }) // state duoc update thi React se re-render lai
-    }
+    // onSearchChange = (event) => {
+    //     // this.state.searchfield = event.target.value // Ko nen set state truc tiep
+    //     this.setState({ searchfield: event.target.value }) // state duoc update thi React se re-render lai
+    // }
 
     render() {
-        const { robots, searchfield } = this.state
+        const { robots/*, searchfield*/ } = this.state
+        const { searchField, onSearchChange } = this.props
         if ( ! robots.length) {
             return <h1 className="tc ma5">Loading</h1>
         }
 
-        const filteredRobots = robots.filter(robot => robot.name.toLowerCase().includes(searchfield.toLowerCase()))
+        const filteredRobots = robots.filter(robot => robot.name.toLowerCase().includes(searchField.toLowerCase()))
 
         return (
             <div className="tc">
                 <h1 className="f1">RoboFriends</h1>
-                <SearchBox searchChange={ this.onSearchChange } />
+                <SearchBox searchChange={ /*this.*/onSearchChange } />
                 <Scroll>
                     <ErrorBoundary>
                         <CardList robots={ filteredRobots } />
@@ -64,4 +76,4 @@ class App extends Component {
 //     );
 // }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
